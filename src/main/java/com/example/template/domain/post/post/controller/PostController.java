@@ -1,5 +1,6 @@
 package com.example.template.domain.post.post.controller;
 
+import com.example.template.domain.post.post.entity.Post;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
 public class PostController {
+    private List<Post> posts = new ArrayList();
+    private long lastId = 3L;
+
+    public PostController() {
+        Post p1 = Post.builder()
+                .id(1L)
+                .title("title1")
+                .content("title1")
+                .build();
+
+        Post p2 = Post.builder()
+                .id(2L)
+                .title("title2")
+                .content("title2")
+                .build();
+
+        Post p3 = Post.builder()
+                .id(3L)
+                .title("title3")
+                .content("title3")
+                .build();
+
+        posts.add(p1);
+        posts.add(p2);
+        posts.add(p3);
+    }
     @GetMapping("/write")
     @ResponseBody
     public String showWrite() {
@@ -35,7 +64,6 @@ public class PostController {
         private String content;
     }
     @PostMapping("/write")
-    @ResponseBody
     public String doWrite(@Valid WriteForm form, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -50,11 +78,16 @@ public class PostController {
             return getFormHtml(errorMessage, form.getTitle(), form.getContent());
         }
 
-        return """
-                <h1>게시물 조회</h1>
-                <div>%s</div>
-                <div>%s</div>
-                """.formatted(form.getTitle(), form.getContent());
+        Post post = Post.builder()
+                .id(++lastId)
+                .title(form.getTitle())
+                .content(form.getContent())
+                .build();
+
+        posts.add(post);
+
+        //return showList();
+        return "redirect:/posts"; //리다이렉트
     }
 
     private String getFormHtml(String errorMsg, String title, String content) {
@@ -68,4 +101,20 @@ public class PostController {
                     """.formatted(errorMsg,title,content);
     }
 
+    @GetMapping
+    @ResponseBody
+    private String showList() {
+
+        String lis = posts.stream()
+                .map(p -> "<li>" + p.getTitle() + "</li>")
+                .collect(Collectors.joining());
+
+        String ul = "<ul>" + lis + "</ul>";
+
+        return """
+                <div>글 목록</div>
+                %s
+               <a href="/posts/write">글쓰기</a>
+               """.formatted(ul);
+    }
 }
