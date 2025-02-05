@@ -47,9 +47,8 @@ public class PostController {
         posts.add(p3);
     }
     @GetMapping("/write")
-    @ResponseBody
     public String showWrite() {
-        return getFormHtml("","","");
+        return "domain/post/post/write";
     }
 
     @AllArgsConstructor
@@ -64,6 +63,7 @@ public class PostController {
         private String content;
     }
     @PostMapping("/write")
+    // @ResponseBody를 빼면 반환값을 템플릿으로 인식한다.
     public String doWrite(@Valid WriteForm form, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -75,7 +75,7 @@ public class PostController {
                     .map(msg -> msg.split("-")[1])
                     .collect(Collectors.joining("<br>"));
 
-            return getFormHtml(errorMessage, form.getTitle(), form.getContent());
+            return "domain/post/post/write";
         }
 
         Post post = Post.builder()
