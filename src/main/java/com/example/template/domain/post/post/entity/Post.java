@@ -1,15 +1,17 @@
 package com.example.template.domain.post.post.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.example.template.global.BaseTime;
+import jakarta.persistence.Entity;
+import lombok.*;
 
+@Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 @Builder
-public class Post {
+public class Post extends BaseTime {
 
-    private Long id;
     private String title;
     private String content;
 
