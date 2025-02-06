@@ -68,16 +68,6 @@ public class PostController {
     public String doWrite(@Valid WriteForm form, BindingResult bindingResult,Model model) {
 
         if (bindingResult.hasErrors()) {
-            //return "뭔가 실패했음";
-            String errorMessage = bindingResult.getFieldErrors()
-                    .stream()
-                    .map(err -> err.getDefaultMessage())
-                    .sorted()
-                    .map(msg -> msg.split("-")[1])
-                    .collect(Collectors.joining("<br>"));
-
-            model.addAttribute("errorMessage", errorMessage);
-
             return "domain/post/post/write";
         }
 
